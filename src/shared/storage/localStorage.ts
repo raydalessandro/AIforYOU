@@ -1,4 +1,4 @@
-const API_KEY_STORAGE_KEY = 'anthropic_api_key';
+const API_KEY_STORAGE_KEY = 'deepseek_api_key';
 
 export const storage = {
   getApiKey(): string | null {

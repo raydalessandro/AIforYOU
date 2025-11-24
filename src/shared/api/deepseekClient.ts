@@ -1,20 +1,24 @@
 import { AppError } from '../errors/AppError';
 import { storage } from '../storage/localStorage';
 
-interface AnthropicMessage {
-  role: 'user' | 'assistant';
+interface DeepSeekMessage {
+  role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
-interface AnthropicResponse {
-  content: Array<{ text: string }>;
+interface DeepSeekResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
   error?: {
     message: string;
     type: string;
   };
 }
 
-export class AnthropicClient {
+export class DeepSeekClient {
   private apiKey: string | null;
 
   constructor() {
@@ -32,31 +36,31 @@ export class AnthropicClient {
 
   async generateMessage(
     prompt: string,
-    model: string = 'claude-sonnet-4-20250514',
+    model: string = 'deepseek-chat',
     maxTokens: number = 4000
   ): Promise<string> {
     if (!this.apiKey) {
       throw new AppError(
-        'API key non configurata. Inserisci la tua API key di Anthropic nelle impostazioni.',
+        'API key non configurata. Inserisci la tua API key di DeepSeek nelle impostazioni.',
         'MISSING_API_KEY',
         401
       );
     }
 
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': this.apiKey,
-          'anthropic-version': '2023-06-01',
+          'Authorization': `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model,
-          max_tokens: maxTokens,
           messages: [
             { role: 'user' as const, content: prompt }
           ],
+          max_tokens: maxTokens,
+          temperature: 0.7,
         }),
       });
 
@@ -69,17 +73,17 @@ export class AnthropicClient {
         );
       }
 
-      const data: AnthropicResponse = await response.json();
+      const data: DeepSeekResponse = await response.json();
       
       if (data.error) {
         throw new AppError(data.error.message, 'API_ERROR');
       }
 
-      if (!data.content || data.content.length === 0) {
+      if (!data.choices || data.choices.length === 0 || !data.choices[0].message?.content) {
         throw new AppError('Nessuna risposta ricevuta dall\'API', 'EMPTY_RESPONSE');
       }
 
-      return data.content[0].text;
+      return data.choices[0].message.content;
     } catch (error) {
       if (error instanceof AppError) {
         throw error;
@@ -92,5 +96,4 @@ export class AnthropicClient {
   }
 }
 
-export const anthropicClient = new AnthropicClient();
-
+export const deepseekClient = new DeepSeekClient();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Key, Check, X, ChefHat, Sparkles } from 'lucide-react';
-import { anthropicClient } from '@shared/api/deepseekClient';
+import { deepseekClient } from '@shared/api/deepseekClient';
 
 interface ApiKeyRequiredProps {
   onApiKeySet: () => void;
@@ -18,7 +18,7 @@ export const ApiKeyRequired: React.FC<ApiKeyRequiredProps> = ({ onApiKeySet }) =
     }
 
     try {
-      anthropicClient.setApiKey(apiKey.trim());
+      deepseekClient.setApiKey(apiKey.trim());
       setSaved(true);
       setError('');
       
@@ -47,7 +47,7 @@ export const ApiKeyRequired: React.FC<ApiKeyRequiredProps> = ({ onApiKeySet }) =
           <p className="text-gray-600 text-lg mb-2">Crea il tuo menù personalizzato con l'intelligenza artificiale</p>
           <div className="flex items-center justify-center gap-2 text-orange-500">
             <Sparkles className="w-5 h-5" />
-            <span className="text-sm font-medium">Powered by Anthropic Claude</span>
+            <span className="text-sm font-medium">Powered by DeepSeek AI</span>
           </div>
         </div>
 
@@ -59,21 +59,21 @@ export const ApiKeyRequired: React.FC<ApiKeyRequiredProps> = ({ onApiKeySet }) =
             </div>
 
             <p className="text-sm text-gray-600 mb-4">
-              Per utilizzare MenuAI, è necessaria un'API key di Anthropic. Puoi ottenerla gratuitamente su{' '}
+              Per utilizzare MenuAI, è necessaria un'API key di DeepSeek. Puoi ottenerla su{' '}
               <a
-                href="https://console.anthropic.com/"
+                href="https://platform.deepseek.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-orange-500 hover:underline font-medium"
               >
-                console.anthropic.com
+                platform.deepseek.com
               </a>
             </p>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  API Key Anthropic
+                  API Key DeepSeek
                 </label>
                 <input
                   type="password"
@@ -84,7 +84,7 @@ export const ApiKeyRequired: React.FC<ApiKeyRequiredProps> = ({ onApiKeySet }) =
                     setSaved(false);
                   }}
                   onKeyPress={handleKeyPress}
-                  placeholder="sk-ant-..."
+                  placeholder="sk-..."
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-400 focus:outline-none text-sm"
                   autoFocus
                 />

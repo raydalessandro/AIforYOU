@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, Key, Check, X } from 'lucide-react';
-import { anthropicClient } from '@shared/api/deepseekClient';
+import { deepseekClient } from '@shared/api/deepseekClient';
 
 interface ApiKeySettingsProps {
   onApiKeySet?: () => void;
@@ -13,7 +13,7 @@ export const ApiKeySettings: React.FC<ApiKeySettingsProps> = ({ onApiKeySet }) =
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const existingKey = anthropicClient.getApiKey();
+    const existingKey = deepseekClient.getApiKey();
     if (existingKey) {
       setApiKey(existingKey);
     }
@@ -26,7 +26,7 @@ export const ApiKeySettings: React.FC<ApiKeySettingsProps> = ({ onApiKeySet }) =
     }
 
     try {
-      anthropicClient.setApiKey(apiKey.trim());
+      deepseekClient.setApiKey(apiKey.trim());
       setSaved(true);
       setError('');
       onApiKeySet?.();
@@ -41,7 +41,7 @@ export const ApiKeySettings: React.FC<ApiKeySettingsProps> = ({ onApiKeySet }) =
   };
 
   const handleRemove = () => {
-    anthropicClient.setApiKey('');
+    deepseekClient.setApiKey('');
     setApiKey('');
     setSaved(false);
     setError('');
@@ -71,22 +71,22 @@ export const ApiKeySettings: React.FC<ApiKeySettingsProps> = ({ onApiKeySet }) =
             </div>
 
             <p className="text-sm text-gray-600 mb-4">
-              Inserisci la tua API key di Anthropic per utilizzare il servizio.
+              Inserisci la tua API key di DeepSeek per utilizzare il servizio.
               Puoi ottenerla su{' '}
               <a
-                href="https://console.anthropic.com/"
+                href="https://platform.deepseek.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-orange-500 hover:underline"
               >
-                console.anthropic.com
+                platform.deepseek.com
               </a>
             </p>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  API Key Anthropic
+                  API Key DeepSeek
                 </label>
                 <input
                   type="password"
@@ -96,7 +96,7 @@ export const ApiKeySettings: React.FC<ApiKeySettingsProps> = ({ onApiKeySet }) =
                     setError('');
                     setSaved(false);
                   }}
-                  placeholder="sk-ant-..."
+                  placeholder="sk-..."
                   className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-orange-400 focus:outline-none"
                 />
                 {error && (
@@ -120,7 +120,7 @@ export const ApiKeySettings: React.FC<ApiKeySettingsProps> = ({ onApiKeySet }) =
                 >
                   Salva
                 </button>
-                {anthropicClient.getApiKey() && (
+                {deepseekClient.getApiKey() && (
                   <button
                     onClick={handleRemove}
                     className="px-4 py-2 border-2 border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"

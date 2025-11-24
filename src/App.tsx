@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MealPlannerModule } from './modules/meal-planner/MealPlannerModule';
 import { ApiKeySettings } from './components/ApiKeySettings';
 import { ApiKeyRequired } from './components/ApiKeyRequired';
-import { anthropicClient } from './shared/api/deepseekClient';
+import { deepseekClient } from './shared/api/deepseekClient';
 
 function App() {
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
@@ -10,7 +10,7 @@ function App() {
   useEffect(() => {
     // Controlla se l'API key è presente al caricamento
     const checkApiKey = () => {
-      const apiKey = anthropicClient.getApiKey();
+      const apiKey = deepseekClient.getApiKey();
       setHasApiKey(!!apiKey);
     };
 

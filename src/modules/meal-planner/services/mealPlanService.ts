@@ -1,4 +1,4 @@
-import { anthropicClient } from '@shared/api/deepseekClient';
+import { deepseekClient } from '@shared/api/deepseekClient';
 import { MealPlannerFormData } from '@shared/types';
 import { AppError } from '@shared/errors/AppError';
 import { handleError } from '@shared/utils/errorHandler';
@@ -32,7 +32,7 @@ export class MealPlanService {
 
       const prompt = this.buildMealPlanPrompt(formData, mealTypeText, totalBudget, activeSpecialMenus);
 
-      return await anthropicClient.generateMessage(prompt, 'claude-sonnet-4-20250514', 4000);
+      return await deepseekClient.generateMessage(prompt, 'deepseek-chat', 4000);
     } catch (error) {
       const errorMessage = handleError(error);
       throw new AppError(
@@ -49,7 +49,7 @@ export class MealPlanService {
   ): Promise<string> {
     try {
       const prompt = this.buildShoppingListPrompt(menuText, formData, totalBudget);
-      return await anthropicClient.generateMessage(prompt, 'claude-sonnet-4-20250514', 3000);
+      return await deepseekClient.generateMessage(prompt, 'deepseek-chat', 3000);
     } catch (error) {
       const errorMessage = handleError(error);
       throw new AppError(
