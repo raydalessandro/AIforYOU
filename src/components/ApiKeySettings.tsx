@@ -45,6 +45,11 @@ export const ApiKeySettings: React.FC<ApiKeySettingsProps> = ({ onApiKeySet }) =
     setApiKey('');
     setSaved(false);
     setError('');
+    // Notifica il componente padre che l'API key è stata rimossa
+    if (onApiKeySet) {
+      // Forza il reload della pagina per tornare alla schermata di configurazione
+      window.location.reload();
+    }
   };
 
   return (
