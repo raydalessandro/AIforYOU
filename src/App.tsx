@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { MealPlannerModule } from './modules/meal-planner/MealPlannerModule';
+import { SavedMenusModule } from './modules/saved-menus/SavedMenusModule';
 import { ApiKeySettings } from './components/ApiKeySettings';
 import { ApiKeyRequired } from './components/ApiKeyRequired';
+import { Header, Page } from './components/Header';
 import { deepseekClient } from './shared/api/deepseekClient';
 
 function App() {
   const [hasApiKey, setHasApiKey] = useState<boolean | null>(null);
+  const [currentPage, setCurrentPage] = useState<Page>('home');
 
   useEffect(() => {
     // Controlla se l'API key è presente al caricamento
@@ -35,10 +38,15 @@ function App() {
     return <ApiKeyRequired onApiKeySet={handleApiKeySet} />;
   }
 
-  // Se c'è API key, mostra il meal planner
+  // Se c'è API key, mostra l'app con navigazione
   return (
     <>
-      <MealPlannerModule />
+      <Header currentPage={currentPage} onNavigate={setCurrentPage} />
+      {currentPage === 'home' ? (
+        <MealPlannerModule />
+      ) : (
+        <SavedMenusModule />
+      )}
       <ApiKeySettings onApiKeySet={handleApiKeySet} />
     </>
   );

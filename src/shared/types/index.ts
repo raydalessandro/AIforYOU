@@ -27,3 +27,13 @@ export interface MealPlannerFormData {
   notes: string;
 }
 
+export interface SavedMealPlan {
+  id: string;
+  title: string;
+  mealPlan: string;
+  shoppingList: string;
+  formData: MealPlannerFormData;
+  createdAt: number;
+  isFavorite: boolean;
+  preview?: string; // Anteprima del menu (prime 200 caratteri)
+}

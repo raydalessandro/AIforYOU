@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { ChefHat } from 'lucide-react';
+import { ChefHat, Save } from 'lucide-react';
 import { MealPlannerForm } from './components/MealPlannerForm';
 import { MealPlanDisplay } from './components/MealPlanDisplay';
 import { ShoppingListDisplay } from './components/ShoppingListDisplay';
 import { mealPlanService } from './services/mealPlanService';
-import { MealPlannerFormData } from '@shared/types';
+import { MealPlannerFormData, SavedMealPlan } from '@shared/types';
 import { handleError } from '@shared/utils/errorHandler';
+import { savedMenusStorage } from '@shared/storage/savedMenusStorage';
 
 const initialFormData: MealPlannerFormData = {
   numPeople: 2,
@@ -91,10 +92,41 @@ export const MealPlannerModule: React.FC = () => {
     document.body.removeChild(element);
   };
 
+  const saveMealPlan = () => {
+    if (!mealPlan) return;
+
+    const title = `Menu ${formData.mealType === 'singolo' ? 'Singolo' : formData.duration + ' giorni'} - ${formData.cuisine} ${formData.season}`;
+    
+    const savedMenu: SavedMealPlan = {
+      id: `menu-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      title,
+      mealPlan,
+      shoppingList: shoppingList || '',
+      formData: { ...formData },
+      createdAt: Date.now(),
+      isFavorite: false,
+      preview: mealPlan.substring(0, 200) + '...'
+    };
+
+    savedMenusStorage.save(savedMenu);
+    
+    // Mostra notifica
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2';
+    notification.innerHTML = '<span>✓ Menu salvato con successo!</span>';
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      notification.style.transition = 'opacity 0.3s';
+      setTimeout(() => document.body.removeChild(notification), 300);
+    }, 2000);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 p-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8 pt-8">
+        <div className="text-center mb-8 pt-4">
           <div className="flex items-center justify-center gap-3 mb-4">
             <ChefHat className="w-12 h-12 text-orange-600" />
             <h1 className="text-4xl font-bold text-gray-800">MenuAI</h1>
@@ -110,10 +142,23 @@ export const MealPlannerModule: React.FC = () => {
             loading={loading}
           />
 
-          <MealPlanDisplay
-            mealPlan={mealPlan}
-            loading={loading}
-          />
+          <div className="lg:col-span-1">
+            <MealPlanDisplay
+              mealPlan={mealPlan}
+              loading={loading}
+            />
+            {mealPlan && !loading && (
+              <div className="mt-4 flex justify-center">
+                <button
+                  onClick={saveMealPlan}
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all shadow-lg hover:shadow-xl"
+                >
+                  <Save className="w-5 h-5" />
+                  Salva Menu
+                </button>
+              </div>
+            )}
+          </div>
 
           <ShoppingListDisplay
             shoppingList={shoppingList}
